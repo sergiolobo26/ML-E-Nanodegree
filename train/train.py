@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 import torch.optim as optim
 import torch.utils.data
+import numpy as np
 
 from model import LSTMClassifier
 
@@ -106,9 +107,9 @@ def evaluate(model, eval_loader, loss_fn, device):
 
             outputs = model(batch_X)
             total += batch_y.size(0)
-            correct += (outputs == batch_y).sum().item()
             loss = loss_fn(outputs, batch_y)
-            
+            correct += (np.round(outputs.cpu().data.numpy()) == np.round(batch_y.cpu().data.numpy())).sum().item()
+
             total_loss += loss.data.item()
             
     print("EVALUATION, BCELoss: {:.4f} , Accuracy: {:.4f} ".format(total_loss / total, 100 * correct / total))
